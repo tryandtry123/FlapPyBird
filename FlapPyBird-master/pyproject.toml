@@ -1,32 +1,32 @@
 [project]
-name = "flappybird"
-authors = [{name = "Sourabh Verma", email = "email@sourabh.dev"}]
-version = "1.0.0"
-description = "Flappy Bird in Pygame"
-requires-python = ">=3.9,<4"
+name = "flappybird"  # 项目名称
+authors = [{name = "Sourabh Verma", email = "email@sourabh.dev"}]  # 作者信息
+version = "1.0.0"  # 项目版本
+description = "Flappy Bird in Pygame"  # 项目描述
+requires-python = ">=3.9,<4"  # Python版本要求
 dependencies = [
-    "pygame == 2.4.0"
-    ]
+    "pygame == 2.4.0"  # 主要依赖：Pygame库
+]
 
 [project.optional-dependencies]
-dev = [
-    "pygbag == 0.7.1",
-    "black >= 22.1.0",
-    "pre-commit >= 2.18.1",
-    "flake8 >= 4.0.1",
-    "isort >= 5.10.1"
-    ]
+dev = [  # 可选的开发依赖
+    "pygbag == 0.7.1",  # 用于Web构建的工具
+    "black >= 22.1.0",  # 代码格式化工具
+    "pre-commit >= 2.18.1",  # Git钩子管理工具
+    "flake8 >= 4.0.1",  # 代码检查工具
+    "isort >= 5.10.1"  # 导入排序工具
+]
 
 [tool.black]
-line-length = 80
+line-length = 80  # 每行最大长度
 exclude = '''
     /(
     | \.git
     | build
     )/
-    '''
+    '''  # 排除的文件和目录
 
 [tool.isort]
-profile = "black"
-skip = []
-skip_glob = []
+profile = "black"  # 使用black风格的导入排序
+skip = []  # 跳过的文件
+skip_glob = []  # 跳过的文件模式

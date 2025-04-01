@@ -7,6 +7,7 @@ from ..utils import GameConfig, clamp
 from .entity import Entity
 from .floor import Floor
 from .pipe import Pipe, Pipes
+from .powerup import PowerUpType
 
 
 class PlayerMode(Enum):
@@ -28,7 +29,50 @@ class Player(Entity):
         self.frame = 0
         self.crashed = False
         self.crash_entity = None
+        # 道具效果相关属性
+        self.speed_modifier = 1.0  # 速度修改器
+        self.invincible = False    # 无敌状态
+        self.size_modifier = 1.0   # 大小修改器
+        self.original_image = None # 保存原始图像
         self.set_mode(PlayerMode.SHM)
+        
+    def apply_powerup_effect(self, powerup_type: PowerUpType) -> None:
+        """应用道具效果"""
+        if powerup_type == PowerUpType.SPEED_BOOST:
+            self.speed_modifier = 1.5
+        elif powerup_type == PowerUpType.INVINCIBLE:
+            self.invincible = True
+        elif powerup_type == PowerUpType.SLOW_MOTION:
+            self.speed_modifier = 0.5
+        elif powerup_type == PowerUpType.SMALL_SIZE:
+            # 缩小玩家
+            if self.size_modifier == 1.0:
+                self.original_image = self.image
+                self.size_modifier = 0.6
+                self._resize_player()
+    
+    def remove_powerup_effect(self, powerup_type: PowerUpType) -> None:
+        """移除道具效果"""
+        if powerup_type == PowerUpType.SPEED_BOOST or powerup_type == PowerUpType.SLOW_MOTION:
+            self.speed_modifier = 1.0
+        elif powerup_type == PowerUpType.INVINCIBLE:
+            self.invincible = False
+        elif powerup_type == PowerUpType.SMALL_SIZE:
+            if self.original_image:
+                self.size_modifier = 1.0
+                self.image = self.original_image
+                self.w = self.image.get_width()
+                self.h = self.image.get_height()
+                self.original_image = None
+    
+    def _resize_player(self) -> None:
+        """根据size_modifier调整玩家大小"""
+        if self.size_modifier != 1.0:
+            new_width = int(self.image.get_width() * self.size_modifier)
+            new_height = int(self.image.get_height() * self.size_modifier)
+            self.image = pygame.transform.scale(self.image, (new_width, new_height))
+            self.w = self.image.get_width()
+            self.h = self.image.get_height()
 
     def set_mode(self, mode: PlayerMode) -> None:
         self.mode = mode
@@ -82,7 +126,16 @@ class Player(Entity):
         self.frame += 1
         if self.frame % 5 == 0:
             self.img_idx = next(self.img_gen)
-            self.image = self.config.images.player[self.img_idx]
+            orig_image = self.config.images.player[self.img_idx]
+            
+            # 应用大小修改
+            if self.size_modifier != 1.0:
+                new_width = int(orig_image.get_width() * self.size_modifier)
+                new_height = int(orig_image.get_height() * self.size_modifier)
+                self.image = pygame.transform.scale(orig_image, (new_width, new_height))
+            else:
+                self.image = orig_image
+                
             self.w = self.image.get_width()
             self.h = self.image.get_height()
 
@@ -98,7 +151,9 @@ class Player(Entity):
         if self.flapped:
             self.flapped = False
 
-        self.y = clamp(self.y + self.vel_y, self.min_y, self.max_y)
+        # 应用速度修改器
+        adjusted_vel_y = self.vel_y * self.speed_modifier
+        self.y = clamp(self.y + adjusted_vel_y, self.min_y, self.max_y)
         self.rotate()
 
     def tick_crash(self) -> None:
@@ -129,6 +184,27 @@ class Player(Entity):
     def draw_player(self) -> None:
         rotated_image = pygame.transform.rotate(self.image, self.rot)
         rotated_rect = rotated_image.get_rect(center=self.rect.center)
+        
+        # 无敌状态时添加闪烁效果
+        if self.invincible and pygame.time.get_ticks() % 200 < 100:
+            # 创建一个带有透明度的副本
+            alpha_image = rotated_image.copy()
+            alpha_image.set_alpha(150)
+            self.config.screen.blit(alpha_image, rotated_rect)
+            
+            # 添加光环效果
+            glow_size = max(rotated_rect.width, rotated_rect.height) + 10
+            glow_surface = pygame.Surface((glow_size, glow_size), pygame.SRCALPHA)
+            pygame.draw.circle(
+                glow_surface, 
+                (255, 215, 0, 100),  # 金色光环
+                (glow_size//2, glow_size//2), 
+                glow_size//2
+            )
+            glow_rect = glow_surface.get_rect(center=rotated_rect.center)
+            self.config.screen.blit(glow_surface, glow_rect)
+            
+        # 绘制玩家
         self.config.screen.blit(rotated_image, rotated_rect)
 
     def stop_wings(self) -> None:
@@ -146,6 +222,10 @@ class Player(Entity):
 
     def collided(self, pipes: Pipes, floor: Floor) -> bool:
         """returns True if player collides with floor or pipes."""
+        
+        # 如果处于无敌状态，不检测碰撞
+        if self.invincible:
+            return False
 
         # if player crashes into ground
         if self.collide(floor):

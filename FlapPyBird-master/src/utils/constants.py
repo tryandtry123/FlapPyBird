@@ -1,33 +1,33 @@
-# list of all possible players (tuple of 3 positions of flap)
+# 所有可能的玩家（tuple，包含3个拍打位置）
 PLAYERS = (
-    # red bird
+    # 红鸟
     (
-        "assets/sprites/redbird-upflap.png",
-        "assets/sprites/redbird-midflap.png",
-        "assets/sprites/redbird-downflap.png",
+        "assets/sprites/redbird-upflap.png",  # 红鸟向上拍打的图片
+        "assets/sprites/redbird-midflap.png",  # 红鸟中间拍打的图片
+        "assets/sprites/redbird-downflap.png",  # 红鸟向下拍打的图片
     ),
-    # blue bird
+    # 蓝鸟
     (
-        "assets/sprites/bluebird-upflap.png",
-        "assets/sprites/bluebird-midflap.png",
-        "assets/sprites/bluebird-downflap.png",
+        "assets/sprites/bluebird-upflap.png",  # 蓝鸟向上拍打的图片
+        "assets/sprites/bluebird-midflap.png",  # 蓝鸟中间拍打的图片
+        "assets/sprites/bluebird-downflap.png",  # 蓝鸟向下拍打的图片
     ),
-    # yellow bird
+    # 黄鸟
     (
-        "assets/sprites/yellowbird-upflap.png",
-        "assets/sprites/yellowbird-midflap.png",
-        "assets/sprites/yellowbird-downflap.png",
+        "assets/sprites/yellowbird-upflap.png",  # 黄鸟向上拍打的图片
+        "assets/sprites/yellowbird-midflap.png",  # 黄鸟中间拍打的图片
+        "assets/sprites/yellowbird-downflap.png",  # 黄鸟向下拍打的图片
     ),
 )
 
-# list of backgrounds
+# 背景列表
 BACKGROUNDS = (
-    "assets/sprites/background-day.png",
-    "assets/sprites/background-night.png",
+    "assets/sprites/background-day.png",  # 白天背景
+    "assets/sprites/background-night.png",  # 夜晚背景
 )
 
-# list of pipes
+# 管道列表
 PIPES = (
-    "assets/sprites/pipe-green.png",
-    "assets/sprites/pipe-red.png",
+    "assets/sprites/pipe-green.png",  # 绿色管道
+    "assets/sprites/pipe-red.png",  # 红色管道
 )
