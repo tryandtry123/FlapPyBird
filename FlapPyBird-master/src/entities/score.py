@@ -27,15 +27,7 @@ class Score(Entity):
         """
         增加分数
         """
-        # 检查是否有特殊管道碰撞
-        if hasattr(self, 'special_pipe'):
-            if self.special_pipe == 'speed_up':
-                self.score += 3  # 加速管道额外加2分
-            elif self.special_pipe == 'speed_down':
-                self.score += 2  # 减速管道额外加1分
-            delattr(self, 'special_pipe')
-        else:
-            self.score += 1  # 普通得分
+        self.score += 1  # 分数加1
         self.config.sounds.point.play()  # 播放得分音效
 
     @property

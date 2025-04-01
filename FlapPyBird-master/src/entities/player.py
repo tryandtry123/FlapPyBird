@@ -11,9 +11,11 @@ from .powerup import PowerUpType
 
 
 class PlayerMode(Enum):
-    SHM = "SHM"
-    NORMAL = "NORMAL"
-    CRASH = "CRASH"
+    """玩家模式枚举"""
+    NORMAL = "NORMAL"  # 正常模式
+    SHM = "SHM"  # 静止模式
+    CRASH = "CRASH"  # 撞击模式
+    CRASHED = "CRASHED"  # 撞击模式
 
 
 class Player(Entity):
